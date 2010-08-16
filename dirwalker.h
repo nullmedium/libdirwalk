@@ -33,6 +33,14 @@ namespace dirwalker {
         ~dirwalker() {
         }
 
+        boost::signals2::connection doOnDirectoryEnter(const OnDirectoryEnterSlotType & slot) {
+            return onDirectoryEnter.connect(slot);
+        }
+
+        boost::signals2::connection doOnDirectoryLeaving(const OnDirectoryLeavingSlotType & slot) {
+            return onDirectoryLeaving.connect(slot);
+        }
+
         boost::signals2::connection doOnFile(const OnFileSlotType & slot) {
             return onFile.connect(slot);
         }
@@ -43,16 +51,21 @@ namespace dirwalker {
             directory_iterator end_itr; // default construction yields past-the-end
 
             for (directory_iterator itr( path ); itr != end_itr; ++itr) {
-                if ( is_directory(itr->status()) ) {
-
+                if ( is_symlink( itr->status() ) ) {
+                    
+                } else if ( is_directory( itr->status() ) ) {
                     onDirectoryEnter( itr->path() );
 
                     this->walk(itr->path());
 
                     onDirectoryLeaving( itr->path() );
 
-                } else {
+                } else if ( is_regular_file( itr->status() ) ) {
+
                     onFile( itr->path() );
+
+                } else {
+                    
                 }
             }
         }
