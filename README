@@ -1,0 +1,4 @@
+Header-only directory traversing C++ library.
+
+Based on File::Dirwalk from CPAN.
+ 
