@@ -11,15 +11,22 @@
 #include "dirwalker.h"
 
 void printFilename(const boost::filesystem::path &path) {
-    std::cout << path.string() << std::endl;
+    std::cout << "file: " << path.string() << std::endl;
+}
+
+void printDirectory(const boost::filesystem::path &path) {
+    std::cout << "dir: " << path.string() << std::endl;
 }
 
 int main(int argc, char *argv[]) {
     dirwalker::dirwalker dw;
 
+    dw.doOnDirectoryEnter(&printDirectory);
     dw.doOnFile(&printFilename);
     
-    dw.walk(boost::filesystem::path("/Users/jens"));
+    if (argc > 1) {
+        dw.walk(boost::filesystem::path(argv[1]));
+    }
     
     return 0;
 }
