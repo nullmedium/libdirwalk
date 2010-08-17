@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------// 
 
 #include <iostream>
-#include <map>
+#include <fstream>
 
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
@@ -17,6 +17,13 @@
 #include <boost/signals2/signal.hpp>
 
 namespace dirwalker {
+
+    enum ResponseCode {
+        Success,
+        Failed,
+        Aborted,
+        Prune
+    };
 
     class dirwalker : public boost::noncopyable {
         typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnDirectoryEnter;
@@ -51,12 +58,18 @@ namespace dirwalker {
             directory_iterator end_itr; // default construction yields past-the-end
 
             for (directory_iterator itr( path ); itr != end_itr; ++itr) {
+
                 if ( is_symlink( itr->status() ) ) {
                     
                 } else if ( is_directory( itr->status() ) ) {
+
                     onDirectoryEnter( itr->path() );
 
-                    this->walk(itr->path());
+                    std::ifstream check( itr->path().string().c_str(), std::ios::in );
+
+                    if ( check.good() ) {
+                        this->walk( itr->path() );
+                    }
 
                     onDirectoryLeaving( itr->path() );
 
