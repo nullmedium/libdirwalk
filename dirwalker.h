@@ -1,4 +1,7 @@
-//  example/main.cpp  ---------------------------------------------------------//
+//! \file dirwalker.h
+//! \brief C++ Library (header-only).
+
+//  dirwalker.h  -------------------------------------------------------------//
 
 // 
 // Copyright Jens Luedicke 2010
@@ -16,8 +19,13 @@
 #include <boost/filesystem.hpp>
 #include <boost/signals2/signal.hpp>
 
-namespace dirwalker {
+//! \namespace dirwalk
+//! \brief C++ Namespace of Library
+namespace dirwalk {
 
+    //! 
+    //! \brief Response-code
+    //! 
     enum ResponseCode {
         Success,
         Failed,
@@ -25,34 +33,65 @@ namespace dirwalker {
         Prune
     };
 
+    //! \class dirwalker
+    //! \brief Dirwalker class
     class dirwalker : public boost::noncopyable {
         typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnDirectoryEnter;
         typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnDirectoryLeaving;
         typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnFile;
 
     public:
-        typedef OnDirectoryEnter::slot_type OnDirectoryEnterSlotType;
-        typedef OnDirectoryEnter::slot_type OnDirectoryLeavingSlotType;
-        typedef OnDirectoryEnter::slot_type OnFileSlotType;
+        //! Type-definition for callback/slot function.
+        typedef OnDirectoryEnter::slot_type   OnDirectoryEnterSlotType;
 
+        //! Type-definition for callback/slot function.
+        typedef OnDirectoryLeaving::slot_type OnDirectoryLeavingSlotType;
+
+        //! Type-definition for callback/slot function.
+        typedef OnFile::slot_type             OnFileSlotType;
+
+        //! \fn dirwalker
+        //! \brief Default ctor.
+        //! 
         dirwalker() {
         }
+
+        //! \fn ~dirwalker
+        //! \brief Default dtor.
+        //! 
         ~dirwalker() {
         }
 
+        /// \addtogroup Signals
+        /// @{
+
+        //! 
+        //! Connect slot to be called when entering a directory
+        //! 
         boost::signals2::connection doOnDirectoryEnter(const OnDirectoryEnterSlotType & slot) {
             return onDirectoryEnter.connect(slot);
         }
 
+        //! 
+        //! Connect slot to be called when leaving a directory
+        //! 
         boost::signals2::connection doOnDirectoryLeaving(const OnDirectoryLeavingSlotType & slot) {
             return onDirectoryLeaving.connect(slot);
         }
 
+        //! 
+        //! Connect slot to be called on regular files.
+        //! 
         boost::signals2::connection doOnFile(const OnFileSlotType & slot) {
             return onFile.connect(slot);
         }
 
-        bool walk(const boost::filesystem::path &path) {
+        /// @}
+
+        //! 
+        //! Walking method.
+        //! 
+        bool walk(const boost::filesystem::path &path, std::string globPattern = "*") {
             using namespace boost::filesystem;
 
             directory_iterator end_itr; // default construction yields past-the-end
@@ -65,6 +104,7 @@ namespace dirwalker {
 
                     onDirectoryEnter( itr->path() );
 
+                    //! \todo Fix this!
                     std::ifstream check( itr->path().string().c_str(), std::ios::in );
 
                     if ( check.good() ) {
@@ -84,8 +124,10 @@ namespace dirwalker {
         }
 
     private:
+        //! @{
         OnDirectoryEnter   onDirectoryEnter;
         OnDirectoryLeaving onDirectoryLeaving;
         OnFile             onFile;
+        //! @}
     };
 }
