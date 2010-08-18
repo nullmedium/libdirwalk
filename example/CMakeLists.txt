@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6) 
 project (dirwalker)
 
-include_directories("..")
+include_directories("../src")
 
 set(Boost_DETAILED_FAILURE_MSG TRUE)
 find_package(Boost 1.41.0 COMPONENTS system filesystem)
