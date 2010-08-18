@@ -19,7 +19,7 @@ void printDirectory(const boost::filesystem::path &path) {
 }
 
 int main(int argc, char *argv[]) {
-    dirwalker::dirwalker dw;
+    dirwalk::dirwalker dw;
 
     dw.doOnDirectoryEnter(&printDirectory);
     dw.doOnFile(&printFilename);
