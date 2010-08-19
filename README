@@ -1,4 +1,3 @@
-Header-only directory traversing C++ library.
+Dirwalk - C++ directory traversing library.
 
-Based on File::Dirwalk from CPAN.
- 
+Based on File::DirWalk from CPAN.
