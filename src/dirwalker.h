@@ -29,11 +29,12 @@ namespace dirwalk {
 
     //! \class dirwalker
     //! \brief Dirwalker class
-    template <
-        class FilePolicy = default_policy,
+    template
+    <
+        class FilePolicy,
         class DirectoryPolicy = default_policy,
         class SymlinkPolicy = default_policy
-        >
+    >
     class dirwalker : public boost::noncopyable {
     public:
         //! \fn dirwalker
@@ -45,7 +46,9 @@ namespace dirwalk {
               symlinkPolicy() {
         }
 
-        dirwalker(FilePolicy fp, DirectoryPolicy dp = DirectoryPolicy(), SymlinkPolicy sp = SymlinkPolicy())
+        dirwalker(FilePolicy fp,
+                  DirectoryPolicy dp = DirectoryPolicy(),
+                  SymlinkPolicy sp = SymlinkPolicy())
             : filePolicy(fp),
               directoryPolicy(dp),
               symlinkPolicy(sp) {
