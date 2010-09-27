@@ -39,7 +39,16 @@ namespace dirwalk {
         //! \fn dirwalker
         //! \brief Default ctor.
         //! 
-        dirwalker() {
+        dirwalker()
+            : filePolicy(),
+              directoryPolicy(),
+              symlinkPolicy() {
+        }
+
+        dirwalker(FilePolicy fp, DirectoryPolicy dp = DirectoryPolicy(), SymlinkPolicy sp = SymlinkPolicy())
+            : filePolicy(fp),
+              directoryPolicy(dp),
+              symlinkPolicy(sp) {
         }
 
         //! \fn ~dirwalker
