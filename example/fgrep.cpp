@@ -14,7 +14,7 @@
 #include "dirwalker.h"
 
 struct Grepper {
-    void operator()(const boost::filesystem::path &path) {
+    void action(const boost::filesystem::path &path) {
         std::ifstream in(path.string().c_str(), std::ios::in);
 
         int lineNum = 0;
@@ -36,13 +36,9 @@ struct Grepper {
 
 
 int main(int argc, char *argv[]) {
-    dirwalk::dirwalker dw;
+    dirwalk::dirwalker<Grepper> dw;
 
     if (argc > 2) {
-        Grepper grep;
-        grep.str = argv[1];
-
-        dw.doOnFile(grep);
         dw.walk(boost::filesystem::path(argv[2]));
     } else {
         std::cout << "usage: fgrep <pattern> <directory>" << std::endl;

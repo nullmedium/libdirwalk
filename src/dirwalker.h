@@ -17,39 +17,25 @@
 #include <boost/noncopyable.hpp>
 #include <boost/function.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/signals2/signal.hpp>
 
 //! \namespace dirwalk
 //! \brief C++ Namespace of Library
 namespace dirwalk {
 
-    //! 
-    //! \brief Response-code
-    //! 
-    enum ResponseCode {
-        Success,
-        Failed,
-        Aborted,
-        Prune
+    struct default_policy {
+        void action(const boost::filesystem::path &p) {
+        }
     };
 
     //! \class dirwalker
     //! \brief Dirwalker class
+    template <
+        class FilePolicy = default_policy,
+        class DirectoryPolicy = default_policy,
+        class SymlinkPolicy = default_policy
+        >
     class dirwalker : public boost::noncopyable {
-        typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnDirectoryEnter;
-        typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnDirectoryLeaving;
-        typedef boost::signals2::signal<void (const boost::filesystem::path &)> OnFile;
-
     public:
-        //! Type-definition for callback/slot function.
-        typedef OnDirectoryEnter::slot_type   OnDirectoryEnterSlotType;
-
-        //! Type-definition for callback/slot function.
-        typedef OnDirectoryLeaving::slot_type OnDirectoryLeavingSlotType;
-
-        //! Type-definition for callback/slot function.
-        typedef OnFile::slot_type             OnFileSlotType;
-
         //! \fn dirwalker
         //! \brief Default ctor.
         //! 
@@ -62,36 +48,10 @@ namespace dirwalk {
         ~dirwalker() {
         }
 
-        /// \addtogroup Signals
-        /// @{
-
-        //! 
-        //! Connect slot to be called when entering a directory
-        //! 
-        boost::signals2::connection doOnDirectoryEnter(const OnDirectoryEnterSlotType & slot) {
-            return onDirectoryEnter.connect(slot);
-        }
-
-        //! 
-        //! Connect slot to be called when leaving a directory
-        //! 
-        boost::signals2::connection doOnDirectoryLeaving(const OnDirectoryLeavingSlotType & slot) {
-            return onDirectoryLeaving.connect(slot);
-        }
-
-        //! 
-        //! Connect slot to be called on regular files.
-        //! 
-        boost::signals2::connection doOnFile(const OnFileSlotType & slot) {
-            return onFile.connect(slot);
-        }
-
-        /// @}
-
         //! 
         //! Walking method.
         //! 
-        bool walk(const boost::filesystem::path &path, std::string globPattern = "*") {
+        bool walk(const boost::filesystem::path &path) {
             using namespace boost::filesystem;
 
             directory_iterator end_itr; // default construction yields past-the-end
@@ -100,22 +60,23 @@ namespace dirwalk {
 
                 if ( is_symlink( itr->status() ) ) {
                     
+                    symlinkPolicy.action( itr->path() );
+                    
                 } else if ( is_directory( itr->status() ) ) {
 
-                    onDirectoryEnter( itr->path() );
+                    directoryPolicy.action( itr->path() );
 
                     //! \todo Fix this!
-                    std::ifstream check( itr->path().string().c_str(), std::ios::in );
+                    const std::string &path = itr->path().string();
+                    std::ifstream check( path.c_str(), std::ios::in );
 
                     if ( check.good() ) {
                         this->walk( itr->path() );
                     }
 
-                    onDirectoryLeaving( itr->path() );
-
                 } else if ( is_regular_file( itr->status() ) ) {
 
-                    onFile( itr->path() );
+                    filePolicy.action( itr->path() );
 
                 } else {
                     
@@ -125,9 +86,9 @@ namespace dirwalk {
 
     private:
         //! @{
-        OnDirectoryEnter   onDirectoryEnter;
-        OnDirectoryLeaving onDirectoryLeaving;
-        OnFile             onFile;
+        FilePolicy      filePolicy;
+        DirectoryPolicy directoryPolicy;
+        SymlinkPolicy   symlinkPolicy;
         //! @}
     };
 }
