@@ -10,23 +10,29 @@
 
 #include "dirwalker.h"
 
+using namespace dirwalk;
+using namespace boost::filesystem;
+
 struct FilePolicy {
-    void action(const boost::filesystem::path &path) {
+    void action(const path &path) {
         std::cout << "file: " << path.string() << std::endl;
     }
 };
 
 struct DirectoryPolicy {
-    void action(const boost::filesystem::path &path) {
+    void action(const path &path) {
         std::cout << "dir: " << path.string() << std::endl;
     }
 };
 
 int main(int argc, char *argv[]) {
-    dirwalk::dirwalker<FilePolicy, DirectoryPolicy> dw;
 
     if (argc > 1) {
-        dw.walk(boost::filesystem::path(argv[1]));
+        dirwalker<FilePolicy, DirectoryPolicy> dw;
+
+        path p(argv[1]);
+
+        dw.walk(p);
     }
     
     return 0;
