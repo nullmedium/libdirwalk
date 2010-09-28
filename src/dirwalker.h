@@ -22,13 +22,16 @@
 //! \brief C++ Namespace of Library
 namespace dirwalk {
 
+    //! \brief Default no-op policy.
+    //!
+    //! A policy needs to implement an action method.
     struct default_policy {
         void action(const boost::filesystem::path &p) {
         }
     };
 
     //! \class dirwalker
-    //! \brief Dirwalker class
+    //! \brief dirwalker class
     template
     <
         class FilePolicy,
@@ -46,9 +49,17 @@ namespace dirwalk {
               symlinkPolicy() {
         }
 
-        dirwalker(FilePolicy fp,
-                  DirectoryPolicy dp = DirectoryPolicy(),
-                  SymlinkPolicy sp = SymlinkPolicy())
+        //! \fn dirwalker
+        //! \brief ctor
+        //!
+        //! Constructor to pass user-specific Policy objects to dirwalker class.
+        //!
+        //! \param fp FilePolicy object
+        //! \param dp DirectoryPolicy object
+        //! \param sp SymlinkPolicy object
+        dirwalker(FilePolicy &fp,
+                  DirectoryPolicy &dp = DirectoryPolicy(),
+                  SymlinkPolicy &sp = SymlinkPolicy())
             : filePolicy(fp),
               directoryPolicy(dp),
               symlinkPolicy(sp) {
