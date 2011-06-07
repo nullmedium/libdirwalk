@@ -27,12 +27,17 @@ namespace dirwalk {
     //! A policy needs to implement an action method.
     struct default_policy {
         //! No-op action. Calling this method does nothing.
-        void action(const boost::filesystem::path &p) {
+        void operator()(const boost::filesystem::path &p) {
         }
     };
 
     //! \class dirwalker
     //! \brief dirwalker class
+    //!
+    //! \tparam FilePolicy      Type that needs to provide a function void operator(), taking an boost::filesystem::path const-reference.
+    //! \tparam DirectoryPolicy Type that needs to provide a function operator(), taking an boost::filesystem::path const-reference.
+    //! \tparam SymlinkPolicy   Type that needs to provide a function operator(), taking an boost::filesystem::path const-reference.
+    //!
     template
     <
         class FilePolicy,
@@ -76,11 +81,11 @@ namespace dirwalk {
 
                 if ( is_symlink( itr->status() ) ) {
                     
-                    symlinkPolicy.action( itr->path() );
+                    symlinkPolicy( itr->path() );
                     
                 } else if ( is_directory( itr->status() ) ) {
 
-                    directoryPolicy.action( itr->path() );
+                    directoryPolicy( itr->path() );
 
                     //! \todo Fix this!
                     const std::string &path = itr->path().string();
@@ -92,7 +97,7 @@ namespace dirwalk {
 
                 } else if ( is_regular_file( itr->status() ) ) {
 
-                    filePolicy.action( itr->path() );
+                    filePolicy( itr->path() );
 
                 } else {
                     

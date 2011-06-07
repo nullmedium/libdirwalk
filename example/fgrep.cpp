@@ -18,13 +18,10 @@ using namespace boost::filesystem;
 
 struct Grepper {
 
-    Grepper() {
+    explicit Grepper(const std::string &pattern) : str(pattern) {
     }
 
-    Grepper(const std::string &pattern) : str(pattern) {
-    }
-
-    void action(const path &path) {
+    void operator()(const path &path) {
         std::ifstream in(path.string().c_str(), std::ios::in);
 
         int lineNum = 0;

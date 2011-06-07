@@ -14,13 +14,13 @@ using namespace dirwalk;
 using namespace boost::filesystem;
 
 struct FilePolicy {
-    void action(const path &path) {
+    void operator()(const path &path) {
         std::cout << "file: " << path.string() << std::endl;
     }
 };
 
 struct DirectoryPolicy {
-    void action(const path &path) {
+    void operator()(const path &path) {
         std::cout << "dir: " << path.string() << std::endl;
     }
 };
