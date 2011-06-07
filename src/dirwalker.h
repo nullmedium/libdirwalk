@@ -55,14 +55,10 @@ namespace dirwalk {
         //! Constructor to pass user-specific Policy objects to dirwalker class.
         //!
         //! \param fp FilePolicy object
-        //! \param dp DirectoryPolicy object
-        //! \param sp SymlinkPolicy object
-        dirwalker(FilePolicy &fp,
-                  DirectoryPolicy &dp = DirectoryPolicy(),
-                  SymlinkPolicy &sp = SymlinkPolicy())
+        dirwalker(FilePolicy &fp)
             : filePolicy(fp),
-              directoryPolicy(dp),
-              symlinkPolicy(sp) {
+              directoryPolicy(),
+              symlinkPolicy() {
         }
 
         //! \fn ~dirwalker
