@@ -26,6 +26,7 @@ namespace dirwalk {
     //!
     //! A policy needs to implement an action method.
     struct default_policy {
+        //! No-op action. Calling this method does nothing.
         void action(const boost::filesystem::path &p) {
         }
     };
@@ -40,8 +41,7 @@ namespace dirwalk {
     >
     class dirwalker : public boost::noncopyable {
     public:
-        //! \fn dirwalker
-        //! \brief Default ctor.
+        //! \brief Default constructor.
         //! 
         dirwalker()
             : filePolicy(),
@@ -49,10 +49,7 @@ namespace dirwalk {
               symlinkPolicy() {
         }
 
-        //! \fn dirwalker
-        //! \brief ctor
-        //!
-        //! Constructor to pass user-specific Policy objects to dirwalker class.
+        //! \brief Constructor to pass user-specific Policy objects to dirwalker class.
         //!
         //! \param fp FilePolicy object
         dirwalker(FilePolicy &fp)
@@ -61,14 +58,14 @@ namespace dirwalk {
               symlinkPolicy() {
         }
 
-        //! \fn ~dirwalker
-        //! \brief Default dtor.
+        //! \brief Default desctructor.
         //! 
         ~dirwalker() {
         }
 
         //! 
-        //! Walking method.
+        //! This method iterates over \e path and uses user-specified Policy objects to
+        //! handle regular files, directories and symlinks.
         //! 
         bool walk(const boost::filesystem::path &path) {
             using namespace boost::filesystem;
