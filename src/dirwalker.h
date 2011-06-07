@@ -114,15 +114,4 @@ namespace dirwalk {
         SymlinkPolicy   symlinkPolicy;
         //! @}
     };
-
-    template
-    <
-        class FilePolicy,
-        class DirectoryPolicy = default_policy,
-        class SymlinkPolicy = default_policy
-    >
-    void walk_directory_tree(const boost::filesystem::path &path) {
-        dirwalker<FilePolicy,DirectoryPolicy,SymlinkPolicy> dw;
-        dw.walk(path);
-    }
 }
